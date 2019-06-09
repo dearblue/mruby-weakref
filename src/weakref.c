@@ -199,9 +199,8 @@ weakref_initialize(mrb_state *mrb, mrb_value self)
   mrb_value backrefs;
   mrb_value sclass = mrb_singleton_class(mrb, target);
   if (mrb_type(sclass) == MRB_TT_SCLASS) {
-      if (mrb_iv_defined(mrb, sclass, id_backref)) {
-        backrefs = mrb_iv_get(mrb, sclass, id_backref);
-        mrb_check_type(mrb, backrefs, MRB_TT_ARRAY);
+      backrefs = mrb_iv_get(mrb, sclass, id_backref);
+      if (mrb_type(backrefs) == MRB_TT_ARRAY) {
         mrb_ary_modify(mrb, mrb_ary_ptr(backrefs));
     } else {
         backrefs = mrb_ary_new_capa(mrb, 1);
