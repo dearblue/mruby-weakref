@@ -134,8 +134,9 @@ free_weakref(mrb_state *mrb, void *ptr)
 
       if (!mrb_object_dead_p(mrb, (struct RBasic *)p)) {
         /* capture オブジェクトが生存しているので、その先にある循環参照を切る */
-        if (mrb_obj_ptr(cap->target)->c->tt == MRB_TT_SCLASS) {
-          mrb_value backrefs = mrb_obj_iv_get(mrb, (struct RObject *)(mrb_obj_ptr(cap->target)->c), id_backref);
+        struct RClass *c = mrb_class(mrb, cap->target);
+        if (c->tt == MRB_TT_SCLASS) {
+          mrb_value backrefs = mrb_obj_iv_get(mrb, (struct RObject *)c, id_backref);
           if (mrb_type(backrefs) == MRB_TT_ARRAY) {
             aux_ary_delete_once(mrb, mrb_ary_ptr(backrefs), mrb_obj_value(p));
           }
