@@ -168,6 +168,7 @@ delink_weakref(mrb_state *mrb, struct RData *capture)
 {
   struct capture *capturep = ((struct capture *)capture->data);
   mrb_value target = capturep->target;
+  capturep->backref = NULL;
   if (MRB_FROZEN_P(mrb_obj_ptr(target))) { return; }
   mrb_value sclass = mrb_singleton_class(mrb, target);
   mrb_value backrefs;
