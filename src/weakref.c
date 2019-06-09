@@ -171,7 +171,7 @@ delink_weakref(mrb_state *mrb, struct RData *capture)
   capturep->backref = NULL;
   if (MRB_FROZEN_P(mrb_obj_ptr(target))) { return; }
   mrb_value sclass = mrb_singleton_class(mrb, target);
-  if (mrb_iv_defined(mrb, sclass, id_backref)) {
+  if (mrb_type(sclass) == MRB_TT_SCLASS) {
     mrb_value backrefs = mrb_iv_get(mrb, sclass, id_backref);
     if (mrb_type(backrefs) == MRB_TT_ARRAY) {
       aux_ary_delete_once(mrb, mrb_ary_ptr(backrefs), mrb_obj_value(capture));
