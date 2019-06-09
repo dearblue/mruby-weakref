@@ -219,7 +219,7 @@ weakref_initialize(mrb_state *mrb, mrb_value self)
 
   mrb_data_init(self, capture, &weakref_data_type);
 
-#if MRUBY_RELEASE_NO < 20002 || !defined(mrb_true_p)
+#if MRUBY_RELEASE_NO < 20002 && !defined(mrb_true_p)
   /* "new" になっているので、"initialize" に書き換える */
   mrb->c->ci->mid = mrb_intern_lit(mrb, "initialize");
 #endif
@@ -227,7 +227,7 @@ weakref_initialize(mrb_state *mrb, mrb_value self)
   struct RClass *c = C_WEAKREF;
   mrb_value ret = aux_yield_super(mrb, self, 1, &target, &c);
 
-#if MRUBY_RELEASE_NO < 20002 || !defined(mrb_true_p)
+#if MRUBY_RELEASE_NO < 20002 && !defined(mrb_true_p)
   /* "initialize" に書き換えていたので、"new" に戻す */
   mrb->c->ci->mid = mrb_intern_lit(mrb, "new");
 #endif
