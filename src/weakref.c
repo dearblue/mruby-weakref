@@ -22,7 +22,7 @@
 #define E_REFERROR  mrb_class_get_under(mrb, C_WEAKREF, "RefError")
 
 #ifndef E_STANDARD_ERROR
-# define E_STANDARD_ERROR mrb_exc_get(mrb, "StandardError")
+# define E_STANDARD_ERROR (mrb->eStandardError_class)
 #endif
 
 #define AUX_DATA_MALLOC(M, C, S, T, D)                          \
