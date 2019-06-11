@@ -10,7 +10,7 @@
 #include <mruby/proc.h>
 #include <stdlib.h>
 
-#if !defined(mrb_true_p) || MRUBY_RELEASE_NO < 20002
+#if MRUBY_RELEASE_NO < 20002 && !defined(mrb_true_p)
 # define RIStruct RIstruct
 #endif
 
