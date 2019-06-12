@@ -181,19 +181,19 @@ delink_weakref(mrb_state *mrb, struct RData *capture)
 }
 
 static mrb_value
-weakref_initialize(mrb_state *mrb, mrb_value self)
+weakref_s_initialize_reference(mrb_state *mrb, mrb_value self)
 {
-  mrb_value target;
-  mrb_get_args(mrb, "o", &target);
+  mrb_value ref, target;
+  mrb_get_args(mrb, "oo", &ref, &target);
 
-  if (mrb_type(self) != MRB_TT_DATA) {
+  if (mrb_type(ref) != MRB_TT_DATA) {
     /* 例外を起こす */
-    mrb_check_type(mrb, self, MRB_TT_DATA);
+    mrb_check_type(mrb, ref, MRB_TT_DATA);
   }
 
-  struct RData *weakref = RDATA(self);
+  struct RData *weakref = RDATA(ref);
   if (weakref->type != NULL) {
-    struct RData *tmp = (struct RData *)mrb_data_get_ptr(mrb, self, &weakref_data_type);
+    struct RData *tmp = (struct RData *)mrb_data_get_ptr(mrb, ref, &weakref_data_type);
     delink_weakref(mrb, tmp);
   }
 
@@ -217,22 +217,9 @@ weakref_initialize(mrb_state *mrb, mrb_value self)
   capturep->backref = weakref;
   if (!mrb_nil_p(backrefs)) { mrb_ary_push(mrb, backrefs, mrb_obj_value(capture)); }
 
-  mrb_data_init(self, capture, &weakref_data_type);
+  mrb_data_init(ref, capture, &weakref_data_type);
 
-#if MRUBY_RELEASE_NO < 20002 && !defined(mrb_true_p)
-  /* "new" になっているので、"initialize" に書き換える */
-  mrb->c->ci->mid = mrb_intern_lit(mrb, "initialize");
-#endif
-
-  struct RClass *c = C_WEAKREF;
-  mrb_value ret = aux_yield_super(mrb, self, 1, &target, &c);
-
-#if MRUBY_RELEASE_NO < 20002 && !defined(mrb_true_p)
-  /* "initialize" に書き換えていたので、"new" に戻す */
-  mrb->c->ci->mid = mrb_intern_lit(mrb, "new");
-#endif
-
-  return ret;
+  return ref;
 }
 
 static mrb_value
@@ -360,10 +347,10 @@ mrb_mruby_weakref_gem_init(mrb_state *mrb)
 
   struct RClass *weakref = mrb_define_class(mrb, "WeakRef", mrb_class_get(mrb, "Delegator"));
   MRB_SET_INSTANCE_TT(weakref, MRB_TT_DATA);
-  mrb_define_method(mrb, weakref, "initialize", weakref_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, weakref, "__setobj__", weakref_setobj, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, weakref, "__getobj__", weakref_getobj, MRB_ARGS_NONE());
   mrb_define_method(mrb, weakref, "weakref_alive?", weakref_alive_p, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, weakref, "__initialize_reference__", weakref_s_initialize_reference, MRB_ARGS_REQ(2));
   mrb_define_class_method(mrb, weakref, "getobj", weakref_s_getobj, MRB_ARGS_NONE());
   mrb_define_class_method(mrb, weakref, "alive?", weakref_s_alive_p, MRB_ARGS_NONE());
 
