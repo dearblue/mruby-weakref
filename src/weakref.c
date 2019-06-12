@@ -10,6 +10,17 @@
 #include <mruby/proc.h>
 #include <stdlib.h>
 
+#if MRUBY_RELEASE_NO < 10200
+# define MRB_FROZEN_P(O)  (FALSE)
+#elif MRUBY_RELEASE_NO < 10300
+# define MRB_FROZEN_P(O)  ((O)->tt == MRB_TT_STRING ? RSTR_FROZEN_P(O) : FALSE)
+#endif
+
+#if MRUBY_RELEASE_NO < 10400
+# define ARY_PTR(A)   ((const mrb_value*)(A)->ptr)
+# define ARY_LEN(A)   ((A)->len)
+#endif
+
 #if MRUBY_RELEASE_NO < 20002 && !defined(mrb_true_p)
 # define RIStruct RIstruct
 #endif
