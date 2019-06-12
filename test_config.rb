@@ -14,8 +14,6 @@ config = YAML.load <<'YAML'
   builds:
     host:
       defines: MRB_INT64
-      gems:
-      - :core: "mruby-io"
     host-int32:
       defines: MRB_INT32
     host-nan-int16:
