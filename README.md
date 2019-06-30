@@ -1,17 +1,17 @@
 # mruby-weakref
 
-([Converted English version by Google translate / Google translate によって変換された英語版](README.md))
+([日本語で書かれた原文 / Written original README in Japanese](README.ja.md))
 
-mruby 上で利用可能な、弱い参照オブジェクトです。
+A weak reference object available on mruby.
 
-CRuby の標準添付ライブラリである `weakref` を模倣しているつもりです。
+I'm trying to mimic the CRuby standard attachment library `weakref`.
 
-[How to weakly reference a mrb_value in C++ #4479](https://github.com/mruby/mruby/issues/4479) に触発されて作成しました。
+Inspired by [How to weakly reference a mrb_value in C++ #4479](https://github.com/mruby/mruby/issues/4479) and created.
 
 
-## くみこみかた
+## How to install
 
-`build_config.rb` に gem として追加して、mruby をビルドして下さい。
+Build mruby by adding it as a gem to `build_config.rb`.
 
 ```ruby
 MRuby::Build.new do |conf|
@@ -21,7 +21,7 @@ end
 
 - - - -
 
-mruby gem パッケージとして依存したい場合、`mrbgem.rake` に記述して下さい。
+If you want to depend on the mruby gem package, write it in `mrbgem.rake`.
 
 ```ruby
 # mrbgem.rake
@@ -32,11 +32,11 @@ end
 ```
 
 
-## つかいかた
+## How to use
 
-たぶん <https://docs.ruby-lang.org/ja/latest/library/weakref.html> の通りに動作します……するといいな。
+Maybe it works as <https://docs.ruby-lang.org/ja/latest/library/weakref.html> ... hopefully.
 
-  - サンプルコード (`example.rb`):
+  - Sample code (`example.rb`):
 
     ```ruby
     def makeref
@@ -53,7 +53,7 @@ end
     p ref.__getobj__
     ```
 
-  - mruby で実行:
+  - run with mruby:
 
     ```
     % ./build/host/bin/mruby example.rb
@@ -65,7 +65,7 @@ end
     example.rb:12: Invalid Reference - probably recycled (WeakRef::RefError)
     ```
 
-  - ruby-2.6.3 で実行:
+  - run with ruby-2.6.3:
 
     ```
     % ruby26 -r weakref example.rb
@@ -77,9 +77,9 @@ end
     ```
 
 
-## 実装方法について
+## About the implementation method
 
-実装方法については [HOW_TO_IMP.md](HOW_TO_IMP.md) を見て下さい。
+Please see [HOW_TO_IMP.md](HOW_TO_IMP.md) for implementation method.
 
 
 ## Specification

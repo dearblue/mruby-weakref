@@ -1,7 +1,7 @@
 #!ruby
 
 MRuby::Gem::Specification.new("mruby-weakref") do |s|
-  s.summary = "WeakRef implementation for mruby"
+  s.summary = "weakref implementation for mruby"
   version = File.read(File.join(__dir__, "README.ja.md")).scan(/^\s*[\-\*] version:\s*(\d+(?:\.\w+)+)/i).flatten[-1]
   s.version = version if version
   s.license = "CC0"
