@@ -8,6 +8,7 @@
 #include <mruby/data.h>
 #include <mruby/error.h>
 #include <mruby/proc.h>
+#include <mruby/gc.h> /* for mrb_objspace_each_objects */
 #include <stdlib.h>
 
 #if MRUBY_RELEASE_NO < 10200
@@ -99,6 +100,9 @@ free_weakref(mrb_state *mrb, void *ptr)
       if (!mrb_object_dead_p(mrb, (struct RBasic *)p)) {
         /* capture オブジェクトが生存しているので、その先にある循環参照を切る */
         struct RClass *c = mrb_class(mrb, cap->target);
+        for (; c->tt == MRB_TT_ICLASS; c = c->super) {
+          if (c->super == c) { break; }
+        }
         if (c->tt == MRB_TT_SCLASS) {
           mrb_value backrefs = mrb_obj_iv_get(mrb, (struct RObject *)c, id_backref);
           if (mrb_type(backrefs) == MRB_TT_ARRAY) {
@@ -322,7 +326,35 @@ mrb_mruby_weakref_gem_init(mrb_state *mrb)
   (void)referr;
 }
 
+#if MRUBY_RELEASE_NO < 10300
+# define MRB_EACH_OBJ_OK
+typedef void aux_each_object_ret;
+#else
+typedef int aux_each_object_ret;
+#endif
+
+static aux_each_object_ret
+cleanup_object(struct mrb_state *mrb, struct RBasic *b, void *udata)
+{
+  if (b->tt == MRB_TT_DATA) {
+    struct RData *d = (struct RData *)b;
+    if (d->type == &weakref_data_type) {
+      d->data = NULL;
+      d->type = NULL;
+    } else if (d->type == &capture_data_type) {
+      if (d->data) {
+        mrb_free(mrb, d->data);
+      }
+      d->data = NULL;
+      d->type = NULL;
+    }
+  }
+
+  return MRB_EACH_OBJ_OK;
+}
+
 void
 mrb_mruby_weakref_gem_final(mrb_state *mrb)
 {
+  mrb_objspace_each_objects(mrb, cleanup_object, NULL);
 }
