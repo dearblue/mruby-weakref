@@ -319,8 +319,8 @@ mrb_mruby_weakref_gem_init(mrb_state *mrb)
   mrb_define_method(mrb, weakref, "__getobj__", weakref_getobj, MRB_ARGS_NONE());
   mrb_define_method(mrb, weakref, "weakref_alive?", weakref_alive_p, MRB_ARGS_NONE());
   mrb_define_class_method(mrb, weakref, "__initialize_reference__", weakref_s_initialize_reference, MRB_ARGS_REQ(2));
-  mrb_define_class_method(mrb, weakref, "getobj", weakref_s_getobj, MRB_ARGS_NONE());
-  mrb_define_class_method(mrb, weakref, "alive?", weakref_s_alive_p, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, weakref, "getobj", weakref_s_getobj, MRB_ARGS_REQ(1));
+  mrb_define_class_method(mrb, weakref, "alive?", weakref_s_alive_p, MRB_ARGS_REQ(1));
 
   struct RClass *referr = mrb_define_class_under(mrb, weakref, "RefError", E_STANDARD_ERROR);
   (void)referr;
