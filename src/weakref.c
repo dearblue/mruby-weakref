@@ -26,6 +26,10 @@
 # define RIStruct RIstruct
 #endif
 
+#if MRUBY_RELEASE_NO < 20100
+# define mrb_data_p(O) (mrb_type(O) == MRB_TT_DATA)
+#endif
+
 #define id_WeakRef  mrb_intern_lit(mrb, "WeakRef")
 #define id_RefError mrb_intern_lit(mrb, "RefError")
 #define id_backref  mrb_intern_lit(mrb, "backref@mruby-weakref")
@@ -297,7 +301,9 @@ weakref_s_alive_p(mrb_state *mrb, mrb_value self)
   mrb_value ref;
   mrb_get_args(mrb, "o", &ref);
 
-  if (mrb_data_check_get_ptr(mrb, ref, &weakref_data_type) == NULL) {
+  if (mrb_data_p(ref) && DATA_TYPE(ref) == &weakref_data_type && !DATA_PTR(ref)) {
+    return mrb_false_value();
+  } else if (mrb_data_check_get_ptr(mrb, ref, &weakref_data_type) == NULL) {
     /* weakref オブジェクトではないので、常に「生きている」オブジェクトである */
     return mrb_true_value();
   } else {
