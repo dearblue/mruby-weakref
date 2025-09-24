@@ -7,28 +7,25 @@ on:
     branches: "*"
 
 jobs:
-  ubuntu-16-04:
-    runs-on: ubuntu-16.04
-    name: ubuntu-16.04 (mruby-${{matrix.TARGET_MRUBY}})
+  ubuntu:
+    runs-on: ubuntu-latest
+    name: ubuntu (mruby-${{matrix.TARGET_MRUBY}})
     strategy:
       matrix:
         TARGET_MRUBY:
         - master
-        - 2.1.2
-        - 2.1.1
-        - 2.1.0
-        - 2.0.1
-        - 2.0.0
-        - 1.4.1
-        - 1.4.0
-        - 1.3.0
+        - 3.4.0
+        - 3.3.0
+        - 3.2.0
+        - 3.1.0
+        - 3.0.0
     env:
       MRUBY_URL: "https://github.com/mruby/mruby/archive/${{matrix.TARGET_MRUBY}}.tar.gz"
       MRUBY_DIR: "mruby-${{matrix.TARGET_MRUBY}}"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v5
     - name: fetch and extract mruby
-      run: wget -O wget -O- $MRUBY_URL | tar xzf -
+      run: wget -O- $MRUBY_URL | tar xzf -
     - name: build
       run: rake -vf $MRUBY_DIR/Rakefile MRUBY_CONFIG=test_config.rb
     - name: test
