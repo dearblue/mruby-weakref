@@ -10,11 +10,15 @@
 #include <mruby/proc.h>
 #include <mruby/gc.h> /* for mrb_objspace_each_objects */
 #include <stdlib.h>
+#include <string.h>
 
 #if MRUBY_RELEASE_NO < 10200
 # define MRB_FROZEN_P(O)  (FALSE)
 #elif MRUBY_RELEASE_NO < 10300
 # define MRB_FROZEN_P(O)  ((O)->tt == MRB_TT_STRING ? RSTR_FROZEN_P(O) : FALSE)
+#elif !defined(MRB_FROZEN_P)
+# // for mruby-3.4.0+
+# define MRB_FROZEN_P(O)  mrb_frozen_p(O)
 #endif
 
 #if MRUBY_RELEASE_NO < 10400
